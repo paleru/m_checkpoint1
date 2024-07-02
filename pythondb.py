@@ -1,9 +1,10 @@
 import psycopg2
+from dict_conf import config
+
+params = config()
 
 def db_connection():
-    return psycopg2.connect(
-        host="localhost"
-)
+    return psycopg2.connect(**params)
 
 def read_dict():
     dbconn = db_connection()
@@ -19,7 +20,7 @@ while True: ## REPL - Read Execute Program Loop
     cmd = input("Command: ")
 
     if cmd == "list":
-        
+        print('hello')   
     elif cmd == "quit":
         exit()
     else:
