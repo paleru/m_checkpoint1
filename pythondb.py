@@ -1,8 +1,5 @@
 import psycopg2
-import psycopg2.extras
 from dict_conf import config
-
-
 
 def db_connection():
     params = config()
@@ -18,9 +15,16 @@ def read_dict():
     print(rows)
 
 def insert_query(word, translation):
-
+    assert isinstance(word, str) and isinstance(translation, str), 'Parameter(s) must be string'
     dbconn = db_connection()
     cursor = dbconn.cursor()
+    #checks if word is already
+    cursor.execute("SELECT id FROM dictionary WHERE word = %s", (word,))
+    existing_row = cursor.fetchone()
+
+    if existing_row:
+        raise ValueError(f"'{word}' is already in the dictionary.")
+    
     insert_script = "INSERT INTO dictionary (word, translation) VALUES (%s, %s)"
     cursor.execute(insert_script, (word, translation))
     dbconn.commit()
@@ -34,8 +38,16 @@ def add_word():
     print(f'Added {word} with translation: {translation} to dictionary')
 
 def delete_query(word): 
+    assert isinstance(word, str), 'Parameter must be string'
     dbconn = db_connection()
     cursor = dbconn.cursor()
+    #check if word is not there
+    cursor.execute("SELECT id FROM dictionary WHERE word = %s", (word,))
+    existing_row = cursor.fetchone()
+
+    if not existing_row:
+        raise ValueError(f"'{word}' does not exist in the dictionary.")
+    
     delete_script = 'DELETE FROM dictionary WHERE word = %s'
     #added ',' at end of word due to needing to pass tuple even if only one argument
     cursor.execute(delete_script, (word,))
