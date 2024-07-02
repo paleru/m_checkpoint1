@@ -1,26 +1,28 @@
 import psycopg2
+import psycopg2.extras
 from dict_conf import config
 
-params = config()
+
 
 def db_connection():
+    params = config()
     return psycopg2.connect(**params)
 
 def read_dict():
     dbconn = db_connection()
-    cur = dbconn.cursor()
-    cur.execute("SELECT id, word, translation FROM dictionary;")
-    rows = cur.fetchall()
-    cur.close()
+    cursor = dbconn.cursor()
+    cursor.execute("SELECT id, word, translation FROM dictionary;")
+    rows = cursor.fetchall()
+    cursor.close()
     dbconn.close()
-    return rows
+    print(rows)
 
 
 while True: ## REPL - Read Execute Program Loop
     cmd = input("Command: ")
 
     if cmd == "list":
-        print('hello')   
+        read_dict()
     elif cmd == "quit":
         exit()
     else:

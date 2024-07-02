@@ -9,7 +9,6 @@ def config(filename = 'dict_db.ini', section='postgresql'):
     #get section 
     db = {}
     if parser.has_section(section):
-        print('User data for the connection string: ')
         parameters = parser.items(section)
         for param in parameters:
             db[param[0]] = param[1]
